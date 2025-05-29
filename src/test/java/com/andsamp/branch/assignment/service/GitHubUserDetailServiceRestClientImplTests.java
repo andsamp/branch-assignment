@@ -14,6 +14,8 @@ import com.andsamp.branch.assignment.model.GitHubUser;
 import com.andsamp.branch.assignment.model.GitHubUserDetails;
 import com.andsamp.branch.assignment.model.GitHubUserRepository;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -33,12 +35,12 @@ public class GitHubUserDetailServiceRestClientImplTests {
     GitHubUserDetailServiceRestClientImpl gitHubUserService;
 
     @Test
-    void getUserDetails_shouldReturnWith0Repos() {
+    void getUserDetails_shouldReturnWith0Repos() throws URISyntaxException {
         String username = "samiam";
         GitHubUser gitHubUser = new GitHubUser(
                 "samiam",
-                "ava://tar.url",
-                "u://r.l",
+                new URI("https://localhost:8080/avatar.jpg"),
+                new URI("https://localhost:8080/url"),
                 "name",
                 "there",
                 "superoldemailaddress@aol.com",
@@ -47,10 +49,10 @@ public class GitHubUserDetailServiceRestClientImplTests {
         GitHubUserDetails expected = new GitHubUserDetails(
                 "samiam",
                 "name",
-                "ava://tar.url",
+                new URI("https://localhost:8080/avatar.jpg"),
                 "there",
                 "superoldemailaddress@aol.com",
-                "u://r.l",
+                new URI("https://localhost:8080/url"),
                 new Date(1748406464214L),
                 new ArrayList<>());
 
@@ -65,26 +67,26 @@ public class GitHubUserDetailServiceRestClientImplTests {
     }
 
     @Test
-    void getUserDetails_shouldReturnWithRepos() throws MalformedURLException {
+    void getUserDetails_shouldReturnWithRepos() throws MalformedURLException, URISyntaxException {
         String username = "samiam";
         GitHubUser gitHubUser = new GitHubUser(
                 "samiam",
-                "ava://tar.url",
-                "u://r.l",
+                new URI("https://localhost:8080/avatar.jpg"),
+                new URI("https://localhost:8080/url"),
                 "name",
                 "there",
                 "superoldemailaddress@aol.com",
                 new Date(1748406464214L),
                 200);
 
-        GitHubUserRepository repo = new GitHubUserRepository("repo-1", "https://github/samiam/repo-1");
+        GitHubUserRepository repo = new GitHubUserRepository("repo-1", new URI("https://github.com/samiam/repo-1"));
         GitHubUserDetails expected = new GitHubUserDetails(
                 "samiam",
                 "name",
-                "ava://tar.url",
+                new URI("https://localhost:8080/avatar.jpg"),
                 "there",
                 "superoldemailaddress@aol.com",
-                "u://r.l",
+                new URI("https://localhost:8080/url"),
                 new Date(1748406464214L),
                 Arrays.asList(repo, repo));
 

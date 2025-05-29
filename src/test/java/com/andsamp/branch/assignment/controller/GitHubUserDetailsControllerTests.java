@@ -17,8 +17,9 @@ import com.andsamp.branch.assignment.exception.RateLimitExceededException;
 import com.andsamp.branch.assignment.model.GitHubUserDetails;
 import com.andsamp.branch.assignment.model.GitHubUserRepository;
 import com.andsamp.branch.assignment.service.GitHubUserDetailService;
-import java.util.ArrayList;
+import java.net.URI;
 import java.util.Date;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -103,15 +104,17 @@ public class GitHubUserDetailsControllerTests {
     @Test
     void getUser_shouldReturn200OnGitHubEntityFound() throws Exception {
         String username = "octocat";
+        GitHubUserRepository repo = new GitHubUserRepository("name", new URI("https://github.com/octocat/repo-1"));
+
         GitHubUserDetails gitHubUser = new GitHubUserDetails(
                 "login",
                 "name",
-                "avatar.jpg",
+                new URI("https://localhost:8080/avatar.jpg"),
                 "here",
                 "b@c.a",
-                "url",
+                new URI("http://localhost:8080/url"),
                 new Date(1748406464214L),
-                new ArrayList<GitHubUserRepository>());
+                List.of(repo));
 
         when(gitHubUserDetailService.getGitHubUserDetails(username)).thenReturn(gitHubUser);
 
@@ -122,7 +125,20 @@ public class GitHubUserDetailsControllerTests {
                 .andExpect(
                         content()
                                 .json(
-                                        "{\"user_name\":\"login\",\"display_name\":\"name\",\"avatar\":\"avatar.jpg\",\"geo_location\":\"here\",\"email\":\"b@c.a\",\"url\":\"url\",\"created_at\":\"2025-05-28 04:27:44\",\"repos\":[]}"));
+                                        """
+{
+  "user_name" : "login",
+  "display_name" : "name",
+  "avatar" : "https://localhost:8080/avatar.jpg",
+  "geo_location" : "here",
+  "email" : "b@c.a",
+  "url" : "http://localhost:8080/url",
+  "created_at" : "2025-05-28 04:27:44",
+  "repos" : [ {
+    "name" : "name",
+    "url" : "https://github.com/octocat/repo-1"
+  } ]
+}"""));
 
         verify(gitHubUserDetailService, times(1)).getGitHubUserDetails(username);
     }

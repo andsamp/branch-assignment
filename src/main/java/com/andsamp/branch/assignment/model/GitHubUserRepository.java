@@ -2,6 +2,7 @@ package com.andsamp.branch.assignment.model;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import java.net.URI;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,5 +17,5 @@ public class GitHubUserRepository {
 
     @Setter(onMethod = @__(@JsonSetter(value = "html_url")))
     @Getter(onMethod = @__(@JsonGetter(value = "url")))
-    private String url;
+    private URI url;
 }

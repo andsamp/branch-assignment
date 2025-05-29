@@ -211,13 +211,4 @@ public class GitHubRestClientService {
                 .toEntity(GitHubUserRepository[].class)
                 .getBody();
     }
-
-    //    private void slowServiceWait() {
-    //        try {
-    //            long time = 2000L;
-    //            Thread.sleep(time);
-    //        } catch (InterruptedException e) {
-    //            throw new IllegalStateException(e);
-    //        }
-    //    }
 }
