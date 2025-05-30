@@ -1,7 +1,6 @@
 package com.andsamp.branch.assignment.service;
 
 import com.andsamp.branch.assignment.model.GitHubUser;
-import com.andsamp.branch.assignment.model.GitHubUserDetails;
 import com.andsamp.branch.assignment.model.GitHubUserRepository;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,24 +24,18 @@ public class GitHubUserDetailServiceRestClientImpl implements GitHubUserDetailSe
     }
 
     @Override
-    public GitHubUserDetails getGitHubUserDetails(String username) {
+    public GitHubUser getGitHubUser(String username) {
         GitHubUser user = this.gitHubRestClientService.getGitHubUser(username);
         List<GitHubUserRepository> userRepositories =
-                this.getAllPublicRepositoriesForUser(username, user.publicRepoCount());
+                this.getAllPublicRepositoriesForUser(username, user.getPublicRepoCount());
 
-        return new GitHubUserDetails(
-                user.login(),
-                user.name(),
-                user.avatarUrl(),
-                user.location(),
-                user.email(),
-                user.url(),
-                user.createdAt(),
-                userRepositories);
+        user.setRepos(userRepositories);
+
+        return user;
     }
 
     private List<GitHubUserRepository> getAllPublicRepositoriesForUser(String username, int totalPublicRepos) {
-        ArrayList<GitHubUserRepository> userRepositories = new ArrayList<>();
+        List<GitHubUserRepository> userRepositories = new ArrayList<>();
         int currentPage = 1;
 
         while (totalPublicRepos > 0) {

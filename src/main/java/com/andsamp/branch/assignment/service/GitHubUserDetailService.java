@@ -1,6 +1,6 @@
 package com.andsamp.branch.assignment.service;
 
-import com.andsamp.branch.assignment.model.GitHubUserDetails;
+import com.andsamp.branch.assignment.model.GitHubUser;
 
 public interface GitHubUserDetailService {
 
@@ -10,5 +10,5 @@ public interface GitHubUserDetailService {
      * @param username
      * @return found user details
      */
-    GitHubUserDetails getGitHubUserDetails(String username);
+    GitHubUser getGitHubUser(String username);
 }

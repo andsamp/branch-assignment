@@ -1,6 +1,6 @@
 package com.andsamp.branch.assignment.controller;
 
-import com.andsamp.branch.assignment.model.GitHubUserDetails;
+import com.andsamp.branch.assignment.model.GitHubUser;
 import com.andsamp.branch.assignment.service.GitHubUserDetailService;
 import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class GitHubUserController {
     }
 
     @GetMapping("/{username}")
-    public GitHubUserDetails getUser(
+    public GitHubUser getUser(
             @PathVariable
                     @Pattern(
                             regexp = "^(?i)[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){0,38}$",
@@ -30,6 +30,6 @@ public class GitHubUserController {
                                     "Invalid username. Usernames for user accounts on GitHub can only contain alphanumeric characters and dashes ( - ). Maximum of 39 Characters.")
                     String username) {
 
-        return this.gitHubUserDetailService.getGitHubUserDetails(username);
+        return this.gitHubUserDetailService.getGitHubUser(username);
     }
 }

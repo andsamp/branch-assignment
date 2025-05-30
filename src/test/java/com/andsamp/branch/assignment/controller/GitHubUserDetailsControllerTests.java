@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.andsamp.branch.assignment.exception.GitHubClientException;
 import com.andsamp.branch.assignment.exception.GitHubEntityNotFoundException;
 import com.andsamp.branch.assignment.exception.RateLimitExceededException;
-import com.andsamp.branch.assignment.model.GitHubUserDetails;
+import com.andsamp.branch.assignment.model.GitHubUser;
 import com.andsamp.branch.assignment.model.GitHubUserRepository;
 import com.andsamp.branch.assignment.service.GitHubUserDetailService;
 import java.net.URI;
@@ -48,14 +48,14 @@ public class GitHubUserDetailsControllerTests {
                                         containsString(
                                                 "Usernames for user accounts on GitHub can only contain alphanumeric characters and dashes ( - ). Maximum of 39 Characters.")));
 
-        verify(gitHubUserDetailService, never()).getGitHubUserDetails(anyString());
+        verify(gitHubUserDetailService, never()).getGitHubUser(anyString());
     }
 
     @Test
     void getUser_shouldReturn429OnRateLimitExceededException() throws Exception {
         String username = "octocat";
 
-        when(gitHubUserDetailService.getGitHubUserDetails(username))
+        when(gitHubUserDetailService.getGitHubUser(username))
                 .thenThrow(new RateLimitExceededException("RateLimitExceededException"));
 
         this.mockMvc
@@ -64,14 +64,14 @@ public class GitHubUserDetailsControllerTests {
                 .andExpect(status().is(429))
                 .andExpect(content().string(containsString("RateLimitExceededException")));
 
-        verify(gitHubUserDetailService, times(1)).getGitHubUserDetails(username);
+        verify(gitHubUserDetailService, times(1)).getGitHubUser(username);
     }
 
     @Test
     void getUser_shouldReturn404OnGitHubEntityNotFoundException() throws Exception {
         String username = "octocat";
 
-        when(gitHubUserDetailService.getGitHubUserDetails(username))
+        when(gitHubUserDetailService.getGitHubUser(username))
                 .thenThrow(new GitHubEntityNotFoundException(
                         "Unable to find user octocat", new Exception("I am the root cause of evil.")));
 
@@ -81,14 +81,14 @@ public class GitHubUserDetailsControllerTests {
                 .andExpect(status().is(404))
                 .andExpect(content().string(containsString("Unable to find user octocat")));
 
-        verify(gitHubUserDetailService, times(1)).getGitHubUserDetails(username);
+        verify(gitHubUserDetailService, times(1)).getGitHubUser(username);
     }
 
     @Test
     void getUser_shouldReturnStatusFromGitHubClientException() throws Exception {
         String username = "octocat";
 
-        when(gitHubUserDetailService.getGitHubUserDetails(username))
+        when(gitHubUserDetailService.getGitHubUser(username))
                 .thenThrow(
                         new GitHubClientException("Failed to fetch the thing.", HttpStatus.INTERNAL_SERVER_ERROR, ""));
 
@@ -98,7 +98,7 @@ public class GitHubUserDetailsControllerTests {
                 .andExpect(status().is(500))
                 .andExpect(content().string(containsString("Failed to fetch the thing.")));
 
-        verify(gitHubUserDetailService, times(1)).getGitHubUserDetails(username);
+        verify(gitHubUserDetailService, times(1)).getGitHubUser(username);
     }
 
     @Test
@@ -106,7 +106,7 @@ public class GitHubUserDetailsControllerTests {
         String username = "octocat";
         GitHubUserRepository repo = new GitHubUserRepository("name", new URI("https://github.com/octocat/repo-1"));
 
-        GitHubUserDetails gitHubUser = new GitHubUserDetails(
+        GitHubUser gitHubUser = new GitHubUser(
                 "login",
                 "name",
                 new URI("https://localhost:8080/avatar.jpg"),
@@ -114,9 +114,10 @@ public class GitHubUserDetailsControllerTests {
                 "b@c.a",
                 new URI("http://localhost:8080/url"),
                 new Date(1748406464214L),
+                200,
                 List.of(repo));
 
-        when(gitHubUserDetailService.getGitHubUserDetails(username)).thenReturn(gitHubUser);
+        when(gitHubUserDetailService.getGitHubUser(username)).thenReturn(gitHubUser);
 
         this.mockMvc
                 .perform(get("/users/" + username))
@@ -140,6 +141,6 @@ public class GitHubUserDetailsControllerTests {
   } ]
 }"""));
 
-        verify(gitHubUserDetailService, times(1)).getGitHubUserDetails(username);
+        verify(gitHubUserDetailService, times(1)).getGitHubUser(username);
     }
 }

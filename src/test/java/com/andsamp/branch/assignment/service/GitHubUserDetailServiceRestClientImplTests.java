@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import com.andsamp.branch.assignment.exception.GitHubEntityNotFoundException;
 import com.andsamp.branch.assignment.model.GitHubUser;
-import com.andsamp.branch.assignment.model.GitHubUserDetails;
 import com.andsamp.branch.assignment.model.GitHubUserRepository;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -19,6 +18,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +27,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest
 @TestPropertySource(properties = {"github.client.page_size=100"})
+@Slf4j
 public class GitHubUserDetailServiceRestClientImplTests {
     @MockitoBean
     GitHubRestClientService gitHubRestClientService;
@@ -39,14 +40,15 @@ public class GitHubUserDetailServiceRestClientImplTests {
         String username = "samiam";
         GitHubUser gitHubUser = new GitHubUser(
                 "samiam",
-                new URI("https://localhost:8080/avatar.jpg"),
-                new URI("https://localhost:8080/url"),
                 "name",
+                new URI("https://localhost:8080/avatar.jpg"),
                 "there",
                 "superoldemailaddress@aol.com",
+                new URI("https://localhost:8080/url"),
                 new Date(1748406464214L),
-                0);
-        GitHubUserDetails expected = new GitHubUserDetails(
+                0,
+                null);
+        GitHubUser expected = new GitHubUser(
                 "samiam",
                 "name",
                 new URI("https://localhost:8080/avatar.jpg"),
@@ -54,11 +56,12 @@ public class GitHubUserDetailServiceRestClientImplTests {
                 "superoldemailaddress@aol.com",
                 new URI("https://localhost:8080/url"),
                 new Date(1748406464214L),
+                0,
                 new ArrayList<>());
 
         when(gitHubRestClientService.getGitHubUser(username)).thenReturn(gitHubUser);
 
-        GitHubUserDetails actual = gitHubUserService.getGitHubUserDetails(username);
+        GitHubUser actual = gitHubUserService.getGitHubUser(username);
 
         assertEquals(expected, actual);
 
@@ -71,16 +74,17 @@ public class GitHubUserDetailServiceRestClientImplTests {
         String username = "samiam";
         GitHubUser gitHubUser = new GitHubUser(
                 "samiam",
-                new URI("https://localhost:8080/avatar.jpg"),
-                new URI("https://localhost:8080/url"),
                 "name",
+                new URI("https://localhost:8080/avatar.jpg"),
                 "there",
                 "superoldemailaddress@aol.com",
+                new URI("https://localhost:8080/url"),
                 new Date(1748406464214L),
-                200);
+                200,
+                null);
 
         GitHubUserRepository repo = new GitHubUserRepository("repo-1", new URI("https://github.com/samiam/repo-1"));
-        GitHubUserDetails expected = new GitHubUserDetails(
+        GitHubUser expected = new GitHubUser(
                 "samiam",
                 "name",
                 new URI("https://localhost:8080/avatar.jpg"),
@@ -88,15 +92,16 @@ public class GitHubUserDetailServiceRestClientImplTests {
                 "superoldemailaddress@aol.com",
                 new URI("https://localhost:8080/url"),
                 new Date(1748406464214L),
+                200,
                 Arrays.asList(repo, repo));
 
         when(gitHubRestClientService.getGitHubUser(username)).thenReturn(gitHubUser);
-        GitHubUserRepository[] repos = {};
+        GitHubUserRepository[] repos = {repo};
         when(gitHubRestClientService.getGitHubUserRepos(anyString(), anyInt())).thenReturn(repos);
 
-        GitHubUserDetails actual = gitHubUserService.getGitHubUserDetails(username);
+        GitHubUser actual = gitHubUserService.getGitHubUser(username);
 
-        //        assertEquals(expected, actual);
+        assertEquals(expected, actual);
 
         verify(gitHubRestClientService, times(1)).getGitHubUser(username);
         verify(gitHubRestClientService, times(1)).getGitHubUserRepos(username, 1);
@@ -110,7 +115,7 @@ public class GitHubUserDetailServiceRestClientImplTests {
         when(gitHubRestClientService.getGitHubUser(username))
                 .thenThrow(new GitHubEntityNotFoundException("Unable to find user. Who took my glasses?"));
 
-        assertThrows(GitHubEntityNotFoundException.class, () -> gitHubUserService.getGitHubUserDetails(username));
+        assertThrows(GitHubEntityNotFoundException.class, () -> gitHubUserService.getGitHubUser(username));
 
         verify(gitHubRestClientService, times(1)).getGitHubUser(username);
         verify(gitHubRestClientService, never()).getGitHubUserRepos(anyString(), anyInt());
