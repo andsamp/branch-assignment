@@ -1,13 +1,13 @@
-# Branch Coding Exercise
+# FinTech Interview Coding Exercise
 This Java 21 project is a simple Spring Boot application consisting of a `RestController`, a service what wraps calls to the GitHub API with `@Cacheable`, and another service that orchestrates and maps. 
 
 ## Getting Started/Running Locally
 
 ```bash
-git clone git@github.com:andsamp/branch-assignment.git
+git clone git@github.com:andsamp/interview-assignment-1.git
 ```
 ```bash
-cd branch-assignment
+cd interview-assignment-1
 ```
 ```bash
 ./gradlew bootRun
