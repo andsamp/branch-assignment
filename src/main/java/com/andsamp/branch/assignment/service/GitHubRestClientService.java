@@ -85,7 +85,7 @@ public class GitHubRestClientService {
                                 LocalDateTime.ofEpochSecond(Long.parseLong(rateLimitResetHeader), 0, ZoneOffset.UTC);
 
                         log.error(
-                                "Rate Limit exceeded when trying to retrieve user {}({}): Rate Limit Resets {}Z",
+                                "Rate Limit exceeded when trying to retrieve user {}({}): Rate Limit Resets {}Z: {}",
                                 username,
                                 request.getURI(),
                                 rateLimitReset,
@@ -167,7 +167,7 @@ public class GitHubRestClientService {
                                 LocalDateTime.ofEpochSecond(Long.parseLong(rateLimitResetHeader), 0, ZoneOffset.UTC);
 
                         log.error(
-                                "Rate Limit exceeded when trying to retrieve page {} of {}'s repos({}): Rate Limit Resets {}Z",
+                                "Rate Limit exceeded when trying to retrieve page {} of {}'s repos({}): Rate Limit Resets {}Z: {}",
                                 page,
                                 username,
                                 request.getURI(),

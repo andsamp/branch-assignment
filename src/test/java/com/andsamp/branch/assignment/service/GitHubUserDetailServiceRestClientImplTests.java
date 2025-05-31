@@ -106,6 +106,7 @@ public class GitHubUserDetailServiceRestClientImplTests {
         verify(gitHubRestClientService, times(1)).getGitHubUser(username);
         verify(gitHubRestClientService, times(1)).getGitHubUserRepos(username, 1);
         verify(gitHubRestClientService, times(1)).getGitHubUserRepos(username, 2);
+        verify(gitHubRestClientService, never()).getGitHubUserRepos(username, 3);
     }
 
     @Test
